@@ -1,10 +1,10 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-#define HASH_TABLE_MAX 3
-#define REFRESH 10
-#define PROCESS_SHCEDULING_MAX 12
-#define TTL_INIT 3
+#define HASH_TABLE_MAX 3	//Hash表长度
+#define REFRESH 10			//大更新周期
+#define PROCESS_SHCEDULING_MAX 12	//进程调度序列个数
+#define TTL_INIT 3			//页面初始生存周期
 
 typedef struct Page_Table{
     int ProcessNum;     //进程号
@@ -45,6 +45,11 @@ int main(){
     return 0;
 }
 
+/**
+ * 初始化Hash表，Hash表为指针数组，使所有指针指向NULL
+ * @return
+ *          
+ */
 void ListInit(){
     for(int i = 0; i < HASH_TABLE_MAX; i++){
         Hash_Table[i] = (Page_Table*)malloc(sizeof(Page_Table));
@@ -52,11 +57,27 @@ void ListInit(){
     }
 }
 
+/**
+ * 计算Hash值
+ * @param aProcessNum
+ *          当前进程号
+ * @return
+ *          Hash值，即对应的单链表头指针
+ */
 Page_Table *HashCalculate(int aProcessNum){
     int HashValue = aProcessNum % HASH_TABLE_MAX;
     return Hash_Table[HashValue];   //返回对应的单链表头指针
 }
 
+/**
+ * 计算Hash值
+ * @param *head
+ *          指针数组中的一个元素，某个单链表头指针
+ * @param aProcessNum
+ *          当前进程号
+ * @return
+ *          0：命中且页面未过期，1：页面命中但已过期，-1：出错
+ */
 int PageTableIsHit(Page_Table *head, int aProcessNum){
     Page_Table *node = NULL;
     while(head->next){//循环判断是否命中
@@ -75,6 +96,15 @@ int PageTableIsHit(Page_Table *head, int aProcessNum){
     return -1;
 }
 
+/**
+ * 将当前进程插入到页表中
+ * @param *head
+ *          指针数组中的一个元素，某个单链表头指针
+ * @param aProcessNum
+ *          当前进程号
+ * @return
+ *          
+ */
 void LishInsert(Page_Table *head, int aProcessNum){
     //创建新结点
     Page_Table *node = (Page_Table*)malloc(sizeof(Page_Table));
@@ -85,6 +115,13 @@ void LishInsert(Page_Table *head, int aProcessNum){
     head->next = node;
 }
 
+/**
+ * 更新页表
+ * @param **Hash_Table
+ *          页表
+ * @return
+ *          
+ */
 void Update(Page_Table **Hash_Table){
     Page_Table *node = NULL;
     Page_Table *head = NULL;
@@ -117,6 +154,13 @@ void Update(Page_Table **Hash_Table){
     T = 0;
 }
 
+/**
+ * 打印页表
+ * @param **Hash_Table
+ *          页表
+ * @return
+ *          
+ */
 void OutPutPageTable(Page_Table **Hash_Table){
     Page_Table *node = NULL;
     Page_Table *head = NULL;
