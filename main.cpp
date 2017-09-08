@@ -11,7 +11,7 @@ typedef struct Page_Table{
     int ProcessNum;     //进程号
     int TTL;            //生存周期，其数值等于结束时刻
     int tempTTL;        //缓冲变量
-    int BlockId;
+    int BlockId;        //占用的块号
     Page_Table *next;
 }Page_Table;
 
